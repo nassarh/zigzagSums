@@ -8,7 +8,7 @@ construct origami-like quad-based polyhedral surfaces
 * A *zigzag sum* is the the sum of two zigzags: take every point of one zigzag and add it, by translation as a vector, to every point of another zigzag to produce a polyhedral surface.
 
 ## Observations
-* A zigzag sum is a polyhedral surface composed of parallelograms.
+* A zigzag sum is a periodic polyhedral surface composed of parallelograms.
 * The period of a zigzag sum, in particular, is composed of $2\times 2$ parallelograms.
 * It is possible to deform a zigzag sum in a way that preserves the lengths of all edges and that *almost* preserves the planarity of the facets.
 * Well-known examples of zigzag sums are the "Miura-ori" pattern and the "eggbox" pattern.
