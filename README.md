@@ -1,7 +1,7 @@
 # zigzagSums
 construct origami-like quad-based polyhedral surfaces
 
-
+[Example - deformed tilted squares pattern](tiltedSquaresGeneral.png)
 
 ## Definitions
 * A *zigzag* is a piecewise linear space curve invariant by translation along $A_1A_3$ where $A_1$ is its first vertex and $A_3$ is its third vertex.
