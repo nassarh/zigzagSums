@@ -35,3 +35,8 @@ construct origami-like quad-based polyhedral surfaces
 ## Acknowledgments
 * https://www.nsf.gov/awardsearch/showAward?AWD_ID=2045881
 * http://mmcd.univ-paris-est.fr/funded-projects/post-doc-projects/
+
+## Terms
+* Author: Hussein Nassar (nassarh@missouri.edu)
+* You are free to use and modify for research and education purposes with proper citation and attribution.
+* For commercial use, contact the author.
