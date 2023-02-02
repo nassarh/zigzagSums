@@ -4,25 +4,28 @@ import zigzagsum as zs
 import pyvista as pv  # for 3D rendering
 
 # Define reference unit cell
-# of "equilateral" Miura ori
-gamma = np.pi / 3
-c = np.cos(gamma)
+# of "curved crease Miura ori-esque" pattern
+# alternative orientation
+period = 40
+gamma = np.linspace(-np.pi, np.pi, period)
 s = np.sin(gamma)
-u0 = np.array([s, c, 0])
-v0 = np.array([-s, c, 0])
-w0 = np.array([[0, 1, 0], [0, 1, 0]])
-sgnop = 1
+u0 = np.array([1, 0, 0])
+v0 = np.array([-1, 0, 0])
+w0 = np.vstack([s, np.ones(period), np.zeros(period)]).T / period * 2
 
-# opening angle
+sgnop = -1
+
+# opening angle at initial zigzag
 theta = np.pi / 2
 
 # number of cells per parallel
-N = 5
+N = 3
 
 # number of cells per meridian
-cells = 5
+cells = 3 * period // 2
 
-# Define zigzag: two vectors + invariance by translation (the default)
+# Define initial zigzag
+# opening theta, inclination beta, rotational symmetry of step  2 pi / N
 u, v, _ = zs.zigzag(theta, u0=u0, v0=v0, w0=w0, sgnop=sgnop)
 
 # Build pattern: crease vectors and vertices

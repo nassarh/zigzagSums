@@ -1,6 +1,6 @@
 # Import stuff
 import numpy as np
-import zigzagsum as qd
+import zigzagsum as zs
 import pyvista as pv  # for 3D rendering
 
 # Define reference unit cell
@@ -10,8 +10,7 @@ c = np.cos(gamma)
 s = np.sin(gamma)
 u0 = np.array([1, 0, 0])
 v0 = np.array([-s, c, 0])
-w0 = np.array([0, 1, 0])
-wb0 = np.array([c, s, 0])
+w0 = np.array([[0, 1, 0], [c, s, 0]])
 sgnop = 1
 
 # opening angle at initial zigzag
@@ -28,7 +27,7 @@ cells = 20
 
 # Define initial zigzag
 # opening theta, inclination beta
-u, v, _, _ = qd.zigcircle(theta, beta, N=N, u0=u0, v0=v0, w0=w0, wb0=wb0, sgnop=sgnop)
+u, v, _, _ = zs.zigcircle(theta, beta, N=N, u0=u0, v0=v0, w0=w0, sgnop=sgnop)
 
 # define rotational symmetry by a general rotation
 # axis
@@ -43,8 +42,8 @@ dphi = 2 * np.pi / N
 rot = np.eye(3) + np.sin(dphi) * P + (1 - np.cos(dphi)) * np.dot(P, P)
 
 # Build pattern: crease vectors and vertices
-U, V, W, _ = qd.manysteps(u, v, u0, v0, w0, wb0, cells, sgnop=sgnop, rot=rot)
-X, Y, Z = qd.integrate(U, V, W, N, per=False, rot=rot)
+U, V, W, _ = zs.manysteps(u, v, u0, v0, w0, cells, sgnop=sgnop, rot=rot)
+X, Y, Z = zs.integrate(U, V, W, N, per=False, rot=rot)
 
 # plot
 pl = pv.Plotter()

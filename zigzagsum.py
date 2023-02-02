@@ -63,25 +63,17 @@ def onestep(
     u0,
     v0,
     w0,
-    wb0,
     rot=np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
     sgn=0,
-    turn=1,
     roll=1,
 ):
     # Apply the three spheres intersection for one dent
     # Takes into account periodic bc through rot
     # roll = 1 => u and v are principal folds
     #       -1 => u and v are diagonal faint creases
-    # turn = 1 => it's w's turn, else switch: it's wb's turn
 
     # Setup:
-    #                ********V***************U********
-    #                *             * * *             *
-    #                *          *    *    *          *
-    #                *     Wb-V      Wb    Wb-U      *      turn != 1
-    #                *    *          *          *    *
-    #                * *             *             * *
+    #
     #  rot-1 <-      ********V***************U********      -> rot
     #                *             * * *             *
     #                *          *    *    *          *
@@ -90,21 +82,16 @@ def onestep(
     #                * *             *             * *
     #                ********V***************U********
 
-    if turn == 1:
-        z0 = w0
-    else:
-        z0 = wb0
-
     if roll == 1:
         # use U and V to build W
-        ww = w(u, v, u0, v0, z0, sgn=sgn)
+        ww = w(u, v, u0, v0, w0, sgn=sgn)
         uu = ww - v
         vv = ww - u
     else:
         # use W-U and W-V to build W
-        ww = w(np.dot(rot, u), v, z0 - v0, z0 - u0, z0, sgn=sgn)
+        ww = w(np.dot(rot, u), v, w0 - v0, w0 - u0, w0, sgn=sgn)
         uu = ww - v
-        ww = w(u, np.dot(v, rot), z0 - v0, z0 - u0, z0, sgn=sgn)
+        ww = w(u, np.dot(v, rot), w0 - v0, w0 - u0, w0, sgn=sgn)
         vv = ww - u
 
     return uu, vv, ww
@@ -116,7 +103,6 @@ def manysteps(
     u0,
     v0,
     w0,
-    wb0,
     cells,
     rot=np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
     sgnop=1,
@@ -138,8 +124,11 @@ def manysteps(
     # Be optimistic
     flag = 0
 
-    # Start with w, then wb
-    turn = 1
+    # Start with the first w0
+    turn = 0
+
+    # period of w0
+    period = np.size(w0, 0)
 
     # Start with a right-handed dent
     sgn = 1
@@ -147,17 +136,15 @@ def manysteps(
     for n in range(0, 2 * cells):
         try:
             # Two steps for each row of new nodes
+            z0 = w0[turn, :]
+            turn = (turn + 1) % period
 
             # step 1: build new w
-            uu, vv, ww = onestep(
-                U[n, :], V[n, :], u0, v0, w0, wb0, rot=rot, sgn=sgn, turn=turn, roll=1
-            )
+            uu, vv, ww = onestep(U[n, :], V[n, :], u0, v0, z0, rot=rot, sgn=sgn, roll=1)
             W[n, :] = ww
 
             # step 2: build new u and v
-            uu, vv, ww = onestep(
-                uu, vv, u0, v0, w0, wb0, rot=rot, sgn=-sgn, turn=turn, roll=-1
-            )
+            uu, vv, ww = onestep(uu, vv, u0, v0, z0, rot=rot, sgn=-sgn, roll=-1)
             if sgn * np.dot(np.cross(uu, vv), ww) < 0.0:
                 raise ValueError("basis reverted - paper in self-contact")
             else:
@@ -166,10 +153,7 @@ def manysteps(
 
             # Next time
 
-            # do wb instead of w (and vice versa)
-            turn = -turn
-
-            # and change into a valley or keep it a mountain
+            # change into a valley or keep it a mountain
             sgn = -sgnop * sgn
 
         # Stop construction when the paper tears or self-contact
@@ -255,7 +239,6 @@ def zigzag(
     u0=np.array([1.0, 0.0, 0.0]),
     v0=np.array([-1.0, 0.0, 0.0]),
     w0=np.array([1.0, 0.0, 0.0]),
-    wb0=np.array([1.0, 0.0, 0.0]),
     sgnop=1,
 ):
     # Defines a uniform boundary condition
@@ -271,7 +254,7 @@ def zigzag(
     # ... but let's adjust the parallel direction and the tangent plane
 
     # Initialize unit cell
-    U, V, W, flag = manysteps(u, v, u0, v0, w0, wb0, 1, sgnop=sgnop)
+    U, V, W, flag = manysteps(u, v, u0, v0, w0, np.size(w0, 0), sgnop=sgnop)
 
     # Test if initial condition is feasible
     if flag:
@@ -304,7 +287,6 @@ def zigcircle(
     u0=np.array([1.0, 0.0, 0.0]),
     v0=np.array([-1.0, 0.0, 0.0]),
     w0=np.array([1.0, 0.0, 0.0]),
-    wb0=np.array([1.0, 0.0, 0.0]),
     sgnop=1,
 ):
     # Defines an axisymmetric boundary condition
@@ -317,7 +299,7 @@ def zigcircle(
     # flags if initial condition is not feasible
 
     # Initialize dent
-    u, v, flag = zigzag(theta, u0=u0, v0=v0, w0=w0, wb0=wb0, sgnop=sgnop)
+    u, v, flag = zigzag(theta, u0=u0, v0=v0, w0=w0, sgnop=sgnop)
 
     # Define local basis
     t1 = np.array([1.0, 0.0, 0.0])
