@@ -12,6 +12,7 @@ construct origami-like quad-based polyhedral surfaces
 * The period of a zigzag sum, in particular, is composed of $2\times 2$ parallelograms.
 * It is possible to deform a zigzag sum in a way that preserves the lengths of all edges and that *almost* preserves the planarity of the facets.
 * Well-known examples of zigzag sums are the "Miura-ori" pattern and the "eggbox" pattern.
+* It is possible to exchange one zigzag for (almost) any piecewise smooth space curve.
 
 ## Contents
 * ``zigzagsum.py`` contains functions that allow to construct surfaces that are "screw symmetric" deformed zigzag sums.
