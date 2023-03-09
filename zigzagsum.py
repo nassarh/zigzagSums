@@ -291,7 +291,7 @@ def zigcircle(
 ):
     # Defines an axisymmetric boundary condition
     # characterized by a single dent (u,v) with an opening theta
-    # N = nb of unit cells per meridian
+    # N = nb of unit cells per parallel
     # beta = inclination of the meridian with respect to the axis of symmetry
     # returns the dent (u,v) and a rotation rot definining the symmetry
     # parallel is tangent to (1,0,0) at (0,0,0)
